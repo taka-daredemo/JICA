@@ -1,46 +1,119 @@
-import * as React from 'react'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+"use client"
 
-export const runtime = 'edge'
+import React from 'react'
+import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { createClient } from '@/lib/supabase/client'
 
 export default function LoginPage() {
+  const router = useRouter()
+  const [email, setEmail] = React.useState('')
+  const [password, setPassword] = React.useState('')
+  const [error, setError] = React.useState('')
   const [isLoading, setIsLoading] = React.useState(false)
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setError('')
     setIsLoading(true)
+
     try {
-      // TODO: Supabase Authと連携（メール/パスワードやOAuth）
+      const supabase = createClient()
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+
+      if (signInError) {
+        setError('メールアドレスまたはパスワードが正しくありません')
+        return
+      }
+
+      if (data.user) {
+        router.push('/dashboard')
+        router.refresh()
+      }
+    } catch (err) {
+      setError('ログインに失敗しました。もう一度お試しください。')
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Sign in</CardTitle>
-          <CardDescription>Use your email and password to sign in.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form className="grid gap-4" onSubmit={onSubmit}>
-            <div className="grid gap-1">
-              <label className="text-sm font-medium" htmlFor="email">Email</label>
-              <Input id="email" name="email" type="email" autoComplete="email" required />
-            </div>
-            <div className="grid gap-1">
-              <label className="text-sm font-medium" htmlFor="password">Password</label>
-              <Input id="password" name="password" type="password" autoComplete="current-password" required />
-            </div>
-            <Button type="submit" isLoading={isLoading} className="w-full">Sign in</Button>
-          </form>
-          <div className="mt-4 text-center text-sm text-slate-600">
-            <a className="text-blue-600 hover:underline" href="/register">Create an account</a>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <div className="w-full max-w-md">
+        {/* JICAロゴ */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-lg mb-4">
+            <span className="text-2xl font-bold text-white">J</span>
           </div>
-        </CardContent>
-      </Card>
+          <h1 className="text-2xl font-bold text-gray-900">JICA農業プロジェクト</h1>
+          <p className="text-sm text-gray-600 mt-1">管理システム</p>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>ログイン</CardTitle>
+            <CardDescription>
+              メールアドレスとパスワードを入力してください
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <div className="p-3 rounded-md bg-red-50 border border-red-200">
+                  <p className="text-sm text-red-600">{error}</p>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <label htmlFor="email" className="text-sm font-medium text-gray-700">
+                  メールアドレス
+                </label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="password" className="text-sm font-medium text-gray-700">
+                  パスワード
+                </label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isLoading}
+              >
+                {isLoading ? 'ログイン中...' : 'ログイン'}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        <p className="text-center text-sm text-gray-600 mt-4">
+          DAREDEMO HERO © 2025
+        </p>
+      </div>
     </div>
   )
 }

@@ -189,7 +189,7 @@ model RecurringPattern {
   taskId         String                 @unique @db.Uuid
   pattern        RecurrencePatternType
   interval       Int                    @default(1)
-  daysOfWeek     Int[]?
+  daysOfWeek     Int[]                  @default([])
   endCondition   RecurrenceEndCondition @default(never)
   occurrences    Int?
   endDate        DateTime?

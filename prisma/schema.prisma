@@ -78,6 +78,7 @@ model User {
   trainings     Training[]     @relation("TrainingFacilitator")
   paymentPlans  PaymentPlan[]  @relation("PlanCreator")
   expenses      Expense[]      @relation("ExpenseCreator")
+  activityLogs  ActivityLog[]
 
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
@@ -272,33 +273,105 @@ model Farmer {
   contactEmail       String?
   landSizeHectares   Decimal? @db.Decimal(8, 2)
   yearGroup          Int?
-  status             String?  @default("Active")
-  baselineIncome     Decimal? @db.Decimal(12, 2)
+  status             String?               @default("Active")
+  baselineIncome     Decimal?              @db.Decimal(12, 2)
 
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  attendance         TrainingAttendance[]
+  incomeRecords      FarmerIncomeRecord[]
+
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
 
   @@index([yearGroup])
 }
 
 // 13. Training (session)
 model Training {
-  id            String         @id @default(uuid()) @db.Uuid
+  id            String             @id @default(uuid()) @db.Uuid
   topic         String
   description   String?
   date          DateTime
   location      String?
-  facilitatorId String?        @db.Uuid
+  facilitatorId String?            @db.Uuid
   capacity      Int?
-  status        TrainingStatus @default(Upcoming)
+  status        TrainingStatus     @default(Upcoming)
 
-  facilitator   User?          @relation("TrainingFacilitator", fields: [facilitatorId], references: [id])
+  facilitator   User?              @relation("TrainingFacilitator", fields: [facilitatorId], references: [id])
+  attendance    TrainingAttendance[]
 
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
 
   @@index([date])
   @@index([facilitatorId])
+}
+
+// 14. TrainingAttendance
+enum AttendanceStatus {
+  Registered
+  Present
+  Absent
+  Excused
+}
+
+model TrainingAttendance {
+  id        String           @id @default(uuid()) @db.Uuid
+  sessionId String           @db.Uuid
+  farmerId  String           @db.Uuid
+  status    AttendanceStatus @default(Registered)
+
+  session   Training         @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  farmer    Farmer           @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@unique([sessionId, farmerId])
+  @@index([sessionId])
+  @@index([farmerId])
+}
+
+// 15. FarmerIncomeRecord
+enum IncomeRecordType {
+  Baseline
+  Annual
+  Sale
+}
+
+model FarmerIncomeRecord {
+  id          String            @id @default(uuid()) @db.Uuid
+  farmerId    String            @db.Uuid
+  recordDate  DateTime
+  incomeAmount Decimal          @db.Decimal(12, 2)
+  recordType  IncomeRecordType
+  notes       String?
+
+  farmer      Farmer            @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([farmerId])
+  @@index([recordDate])
+  @@index([recordType])
+}
+
+// 16. ActivityLog
+model ActivityLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String?  @db.Uuid
+  action     String
+  entityType String?
+  entityId   String?  @db.Uuid
+  details    Json?
+
+  user       User?    @relation(fields: [userId], references: [id])
+
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
 }
 
 

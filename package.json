@@ -23,7 +23,7 @@
     "googleapis": "^140.x",
     "lucide-react": "^0.x",
     "next": "14.2.x",
-    "next-intl": "^3.x",
+    "next-intl": "^3.26.5",
     "react": "^18.x",
     "react-big-calendar": "^1.x",
     "react-chartjs-2": "^5.x",
@@ -36,11 +36,12 @@
     "@types/react": "^18.x",
     "@types/react-big-calendar": "^1.x",
     "@types/react-dom": "^18.x",
+    "autoprefixer": "^10.4.21",
     "eslint": "^8.x",
     "eslint-config-next": "14.2.x",
-    "postcss": "^8.x",
+    "postcss": "^8.5.6",
     "prisma": "^6.18.0",
-    "tailwindcss": "^3.x",
+    "tailwindcss": "^3.4.18",
     "typescript": "^5.x"
   }
 }

@@ -1,14 +1,17 @@
-"use client"
+'use client'
 
 import React from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/client'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 
-export default function LoginPage() {
+export default function LoginPage({ params: { locale } }: { params: { locale: string } }) {
   const router = useRouter()
+  const t = useTranslations()
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
   const [error, setError] = React.useState('')
@@ -27,16 +30,16 @@ export default function LoginPage() {
       })
 
       if (signInError) {
-        setError('メールアドレスまたはパスワードが正しくありません')
+        setError(t('login.error'))
         return
       }
 
       if (data.user) {
-        router.push('/dashboard')
+        router.push(`/${locale}/dashboard`)
         router.refresh()
       }
     } catch (err) {
-      setError('ログインに失敗しました。もう一度お試しください。')
+      setError(t('login.errorGeneric'))
     } finally {
       setIsLoading(false)
     }
@@ -50,16 +53,19 @@ export default function LoginPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-lg mb-4">
             <span className="text-2xl font-bold text-white">J</span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">JICA農業プロジェクト</h1>
-          <p className="text-sm text-gray-600 mt-1">管理システム</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('common.projectName')}</h1>
+          <p className="text-sm text-gray-600 mt-1">{t('common.managementSystem')}</p>
+        </div>
+
+        {/* 言語切り替え */}
+        <div className="flex justify-center mb-4">
+          <LanguageSwitcher />
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>ログイン</CardTitle>
-            <CardDescription>
-              メールアドレスとパスワードを入力してください
-            </CardDescription>
+            <CardTitle>{t('login.title')}</CardTitle>
+            <CardDescription>{t('login.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -71,7 +77,7 @@ export default function LoginPage() {
 
               <div className="space-y-2">
                 <label htmlFor="email" className="text-sm font-medium text-gray-700">
-                  メールアドレス
+                  {t('common.email')}
                 </label>
                 <Input
                   id="email"
@@ -86,7 +92,7 @@ export default function LoginPage() {
 
               <div className="space-y-2">
                 <label htmlFor="password" className="text-sm font-medium text-gray-700">
-                  パスワード
+                  {t('common.password')}
                 </label>
                 <Input
                   id="password"
@@ -99,19 +105,15 @@ export default function LoginPage() {
                 />
               </div>
 
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={isLoading}
-              >
-                {isLoading ? 'ログイン中...' : 'ログイン'}
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? t('login.buttonLoading') : t('login.button')}
               </Button>
             </form>
           </CardContent>
         </Card>
 
         <p className="text-center text-sm text-gray-600 mt-4">
-          DAREDEMO HERO © 2025
+          {t('common.copyright')}
         </p>
       </div>
     </div>

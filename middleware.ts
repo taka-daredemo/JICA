@@ -1,14 +1,24 @@
-import { type NextRequest } from 'next/server'
-import { updateSession } from '@/lib/supabase/middleware'
+import createMiddleware from 'next-intl/middleware'
+import { NextRequest, NextResponse } from 'next/server'
+import { locales, defaultLocale } from './i18n/request'
 
-export async function middleware(request: NextRequest) {
-  return await updateSession(request)
+// next-intlのミドルウェアを作成
+const intlMiddleware = createMiddleware({
+  locales,
+  defaultLocale,
+  localePrefix: 'always',
+})
+
+export default async function middleware(request: NextRequest) {
+  // 1. 言語ルーティングを処理
+  const response = intlMiddleware(request)
+
+  // 2. Supabaseの認証チェックは後で追加
+  return response
 }
 
 export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|login|register|api/auth).*)',
-  ],
+  matcher: ['/', '/(ja|en)/:path*'],
 }
 
 

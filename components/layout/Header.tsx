@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Button } from '@/components/ui/button'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 export function Header() {
   return (
@@ -8,10 +8,7 @@ export function Header() {
         <div className="flex items-center gap-3">
           <span className="text-base font-semibold">JICA Project</span>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm">EN</Button>
-          <Button variant="ghost" size="sm">JP</Button>
-        </div>
+        <LanguageSwitcher />
       </div>
     </header>
   )

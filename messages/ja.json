@@ -1,0 +1,55 @@
+{
+  "common": {
+    "projectName": "JICA農業プロジェクト",
+    "managementSystem": "管理システム",
+    "copyright": "DAREDEMO HERO © 2025",
+    "loading": "読み込み中...",
+    "email": "メールアドレス",
+    "password": "パスワード"
+  },
+  "login": {
+    "title": "ログイン",
+    "description": "メールアドレスとパスワードを入力してください",
+    "button": "ログイン",
+    "buttonLoading": "ログイン中...",
+    "error": "メールアドレスまたはパスワードが正しくありません",
+    "errorGeneric": "ログインに失敗しました。もう一度お試しください。"
+  },
+  "dashboard": {
+    "title": "ダッシュボード",
+    "description": "プロジェクト管理の概要を確認できます",
+    "logout": "ログアウト",
+    "stats": {
+      "activeTasks": "進行中のタスク",
+      "budgetUsage": "予算使用率",
+      "teamMembers": "チームメンバー",
+      "targetFarmers": "対象農家",
+      "thisWeek": "今週",
+      "active": "アクティブ",
+      "phase1": "Phase 1"
+    },
+    "recentTasks": {
+      "title": "最近のタスク",
+      "deadline": "期限",
+      "status": {
+        "inProgress": "進行中",
+        "planned": "予定",
+        "completed": "完了"
+      },
+      "tasks": {
+        "farmerList": "農家リスト作成",
+        "training": "初回研修準備",
+        "budget": "予算計画書作成"
+      }
+    },
+    "upcomingEvents": {
+      "title": "今後の予定",
+      "farmerMeeting": "農家選定会議",
+      "trainingSession": "初回研修実施",
+      "monthlyReport": "月次報告書提出",
+      "dueDate": "期限日"
+    }
+  }
+}
+
+
